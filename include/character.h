@@ -1,0 +1,12 @@
+void receiveEvent(int howMany);
+void sitDown(int _speed);
+void halfLayDown(int _speed );
+void layDown(int _speed );
+void stand(int _speed);
+void jump(int _speed );
+void happy(int _speed);
+void dance1(int _speed);
+void leftHand(int _speed );
+void dance1_elem2(int _speed);
+void dance1_elem1(int _speed);
+void waitForServoPos(int servo_ind, int wait_angle,int timeout);
