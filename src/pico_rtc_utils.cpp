@@ -238,7 +238,12 @@ void pico_sleep(int8_t duration)
 #endif /* USE_TINYUSB */
 
   sleep_run_from_xosc();
-
-  sleep_goto_sleep_until(&t_alarm, sleep_callback);
+  
+  gpio_pull_up(4);
+  gpio_pull_up(5);
+        //Sleep
+  sleep_goto_dormant_until_pin(4, true, true);
+  recover_from_sleep();
+  // sleep_goto_sleep_until(&t_alarm, sleep_callback);
 }
 #endif
