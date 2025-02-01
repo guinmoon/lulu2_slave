@@ -53,6 +53,8 @@
 
 #include "pico_rtc_utils.h"
 #include "hardware/pll.h"
+#include "hardware/clocks.h"
+#include "pico/runtime_init.h"
 
 uint scb_orig = scb_hw->scr;
 uint clock0_orig = clocks_hw->sleep_en0;
@@ -135,10 +137,18 @@ void recover_from_sleep(uint scb_orig, uint clock0_orig, uint clock1_orig)
   // Re-enable ring Oscillator control
   rosc_write(&rosc_hw->ctrl, ROSC_CTRL_ENABLE_BITS);
 
-  // reset procs back to default
+  // // reset procs back to default
   scb_hw->scr = scb_orig;
   clocks_hw->sleep_en0 = clock0_orig;
   clocks_hw->sleep_en1 = clock1_orig;
+  // //востанавливает USB 
+  user_irq_unclaim(31);
+  // //Восстанавливает частоты
+  runtime_init_clocks();
+  rosc_enable();
+  // // return USB pll to 48mhz
+  pll_init(pll_usb, 1, 1440000000, 6, 5);
+  //  clocks_init();
 
   // reset clocks
   //  clocks_init();
@@ -149,6 +159,8 @@ void recover_from_sleep(uint scb_orig, uint clock0_orig, uint clock1_orig)
 
 static void sleep_callback(void)
 {
+  // rp2040.restart();
+  recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
   Serial.begin(115200);
   Serial.print("RTC woke us up\n");
   // awake = true;
@@ -213,8 +225,8 @@ void pico_sleep(unsigned duration)
   sleep_goto_sleep_until(&t_alarm, sleep_callback);
 
   // back from dormant state
-  recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
-  rosc_enable();
+  // recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
+  // rosc_enable();
 
   // pll_init(pll_usb, 1, 1440000000, 6, 5); // return USB pll to 48mhz
   // tusb_init();

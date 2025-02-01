@@ -141,6 +141,8 @@ void tailLegsStand(int _speed = 10)
     setTargetPosAndSpeed(SER_RIGHT_BACK, 30, _speed);
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
+    delay(200);
+    sitDown(_speed);
 }
 
 void halfLayDownTail(int _speed = 10)
@@ -149,6 +151,8 @@ void halfLayDownTail(int _speed = 10)
     setTargetPosAndSpeed(SER_RIGHT_BACK, 0, _speed);
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
+    delay(200);
+    sitDown(_speed);
 }
 
 void fullLayDown(int _speed = 10)

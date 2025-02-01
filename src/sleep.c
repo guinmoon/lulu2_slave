@@ -122,7 +122,7 @@ void sleep_goto_sleep_until(datetime_t *t, rtc_callback_t callback) {
     // Go to sleep    
     __wfi();
 
-    pll_init(pll_usb, 1, 1440000000, 6, 5); // return USB pll to 48mhz
+    
 	// tusb_init();     
 }
 
