@@ -9,25 +9,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-// #include <stdlib.h>
-#include "hardware/clocks.h"
-#include "pico_rtc_utils.h"
-#include <hardware/rtc.h>
-#include "hardware/structs/scb.h"
 
-
-
-
-
-/// Determine sleep duration and enter Deep Sleep Mode
-void prepareSleep(void)
-{
-    unsigned long sleep_interval = 5;
-    Serial.printf("Shutdown() - sleeping for %lu s\n", sleep_interval);
-    pico_sleep(sleep_interval);
-    Serial.println("Awake");
-    // rp2040.restart();
-}
 
 void dogInit()
 {
@@ -65,11 +47,12 @@ void setup()
     // delay(2000);
     
     // layDown(4);
-    // leftHand(5);
+    // leftHand(5,false);
     // Настройка I2C
-    Serial.println("Go to sleep after 5 sec");
-    delay(5000);
-    prepareSleep();
+    // Serial.println("Go to sleep after 5 sec");
+    // delay(5000);
+    setLastPingTime(millis());
+    // prepareSleep();
     Wire.begin(8);
     Wire.onReceive(receiveEvent);
 }

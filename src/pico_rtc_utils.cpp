@@ -55,6 +55,7 @@
 #include "hardware/pll.h"
 #include "hardware/clocks.h"
 #include "pico/runtime_init.h"
+#include "character.h"
 
 uint scb_orig = scb_hw->scr;
 uint clock0_orig = clocks_hw->sleep_en0;
@@ -131,6 +132,29 @@ datetime_t *epoch_to_datetime(time_t *epoch, datetime_t *dt)
   return dt;
 }
 
+void measure_freqs(void)
+{
+  uint f_pll_sys = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY);
+  uint f_pll_usb = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_PLL_USB_CLKSRC_PRIMARY);
+  uint f_rosc = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC);
+  uint f_clk_sys = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_SYS);
+  uint f_clk_peri = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_PERI);
+  uint f_clk_usb = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_USB);
+  uint f_clk_adc = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_ADC);
+  uint f_clk_rtc = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_RTC);
+
+  Serial.printf("pll_sys  = %dkHz\n", f_pll_sys);
+  Serial.printf("pll_usb  = %dkHz\n", f_pll_usb);
+  Serial.printf("rosc     = %dkHz\n", f_rosc);
+  Serial.printf("clk_sys  = %dkHz\n", f_clk_sys);
+  Serial.printf("clk_peri = %dkHz\n", f_clk_peri);
+  Serial.printf("clk_usb  = %dkHz\n", f_clk_usb);
+  Serial.printf("clk_adc  = %dkHz\n", f_clk_adc);
+  Serial.printf("clk_rtc  = %dkHz\n", f_clk_rtc);
+  uart_default_tx_wait_blocking();
+  // Can't measure clk_ref / xosc as it is the ref
+}
+
 void recover_from_sleep(uint scb_orig, uint clock0_orig, uint clock1_orig)
 {
 
@@ -141,7 +165,7 @@ void recover_from_sleep(uint scb_orig, uint clock0_orig, uint clock1_orig)
   scb_hw->scr = scb_orig;
   clocks_hw->sleep_en0 = clock0_orig;
   clocks_hw->sleep_en1 = clock1_orig;
-  // //востанавливает USB 
+  // //востанавливает USB
   user_irq_unclaim(31);
   // //Восстанавливает частоты
   runtime_init_clocks();
@@ -159,11 +183,8 @@ void recover_from_sleep(uint scb_orig, uint clock0_orig, uint clock1_orig)
 
 static void sleep_callback(void)
 {
-  // rp2040.restart();
-  recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
-  Serial.begin(115200);
-  Serial.print("RTC woke us up\n");
-  // awake = true;
+  
+  recover_from_sleep();
 }
 
 datetime_t t = {
@@ -176,34 +197,34 @@ datetime_t t = {
     .sec = 00};
 
 // Alarm 10 seconds later
-datetime_t t_alarm = {
-    .year = 2020,
-    .month = 06,
-    .day = 05,
-    .dotw = 5, // 0 is Sunday, so 5 is Friday
-    .hour = 15,
-    .min = 45,
-    .sec = 5};
+
+void recover_from_sleep()
+{
+  // rp2040.restart();
+  setLastPingTime(millis());
+  recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
+  Serial.begin(115200);
+  Serial.print("RTC woke us up\n");
+  // measure_freqs();
+  // awake = true;
+}
 
 // Sleep for <duration> seconds
-void pico_sleep(unsigned duration)
+void pico_sleep(int8_t duration)
 {
-  // datetime_t dt;
-  // rtc_get_datetime(&dt);
-  // Serial.print("RTC time:");
-  // print_dt(dt);
 
-  // time_t now;
-  // datetime_to_epoch(&dt, &now);
+  datetime_t t_alarm = {
+      .year = 2020,
+      .month = 06,
+      .day = 05,
+      .dotw = 5, // 0 is Sunday, so 5 is Friday
+      .hour = 15,
+      .min = 45,
+      .sec = duration};
 
-  // // Add sleep_duration
-  // time_t wakeup = now + duration;
-
-  // epoch_to_datetime(&wakeup, &dt);
-
-  // log_i("Wakeup time:");
-  // print_dt(dt);
-  // gpio_put(16, 1);
+  Serial.printf("Seep for %i sec after %i sec", duration, 4);
+  delay(4000);
+  measure_freqs();
   rtc_init();
   rtc_set_datetime(&t);
   Serial.flush();
@@ -211,10 +232,6 @@ void pico_sleep(unsigned duration)
   Serial2.end();
   Serial.end();
 
-// From
-// https://github.com/lyusupov/SoftRF/tree/master/software/firmware/source/libraries/RP2040_Sleep
-// also see src/pico_rtc
-// --8<-----
 #if defined(USE_TINYUSB)
   // Disable USB
   USBDevice.detach();
@@ -223,13 +240,5 @@ void pico_sleep(unsigned duration)
   sleep_run_from_xosc();
 
   sleep_goto_sleep_until(&t_alarm, sleep_callback);
-
-  // back from dormant state
-  // recover_from_sleep(scb_orig, clock0_orig, clock1_orig);
-  // rosc_enable();
-
-  // pll_init(pll_usb, 1, 1440000000, 6, 5); // return USB pll to 48mhz
-  // tusb_init();
-  // --8<-----
 }
 #endif

@@ -1,6 +1,8 @@
 #include "servos.h"
 #include "global_def.h"
 #include <Servo.h>
+#include "character.h"
+#include "pico_rtc_utils.h"
 
 
 Servo servo_left_front;
@@ -117,9 +119,13 @@ void updateTail()
 // Функция обновления сервоприводов
 void updateServos()
 {
-    unsigned long currentTime = millis();
+    unsigned long currentTime = millis(); 
     if (currentTime - lastUpdateTime >= SER_UPDATE_INTERVAL)
     {
+        if (currentTime-getLastPingTime()>=MSEC_UNTIL_SLEEP){
+            setLastPingTime(currentTime);
+            pico_sleep(RP_SLEEP_DURATION_SEC);
+        }
         lastUpdateTime = currentTime;
         updateTail();
         for (int i = 0; i < 5; i++)
@@ -166,5 +172,6 @@ void core1_update_servos()
     {
         // Обновление сервоприводов выполняется на втором ядре        
         updateServos();
+        // sleep_ms(5);
     }
 }

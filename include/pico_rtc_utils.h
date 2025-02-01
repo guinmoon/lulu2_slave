@@ -67,7 +67,8 @@ datetime_t *epoch_to_datetime(time_t *epoch, datetime_t *dt);
 void print_dt(datetime_t dt);
 void print_tm(struct tm ti);
 
-void pico_sleep(unsigned duration);
+void pico_sleep(int8_t duration);
+void recover_from_sleep();
 
 #endif // PICO_RTC_UTILS_H
 #endif // defined(ARDUINO_ARCH_RP2040)

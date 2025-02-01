@@ -15,3 +15,5 @@ void dance1_elem1(int _speed);
 void waitForServoPos(int servo_ind, int wait_angle,int timeout);
 void stepForward(int _speed , int count);
 void setTailSpeedAndCount(int speed);
+long getLastPingTime();
+void setLastPingTime(long t);
