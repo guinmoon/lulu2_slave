@@ -9,6 +9,10 @@ Servo servo_right_front;
 Servo servo_right_back;
 Servo servo_tail;
 
+
+int tailMovesCount = 0;
+int tailMaxMovesCount = 6;
+
 int currentPos[5] = {SERVO_90, SERVO_90, SERVO_90, SERVO_90, 0};
 int targetPos[5] = {SERVO_90, SERVO_90, SERVO_90, SERVO_90, SERVO_90};
 int servo_speed[5] = {1, 1, 1, 1, 0};
@@ -31,6 +35,13 @@ void initServos()
     servo_tail.attach(SER_TAIL_PIN, USMIN, USMAX);
 }
 
+void tailDetach(){
+    servo_tail.detach();
+}
+
+void tailAttach(){
+    servo_tail.attach(SER_TAIL_PIN, USMIN, USMAX);
+}
 
 void setTargetPosAndSpeed(int servo_ind, int pos, int _speed)
 {
@@ -69,10 +80,20 @@ void setTailSpeed(int _speed)
     servo_speed[SER_TAIL] = _speed;
 }
 
+void setTailMaxCount(int count){
+    tailMaxMovesCount = count * 2;
+}
+
+
 void updateTail()
 {
     if (servo_speed[SER_TAIL] == 0)
         return;
+    if (tailMovesCount>=tailMaxMovesCount){
+        servo_speed[SER_TAIL] = 0;
+        tailMovesCount = 0;
+        return;
+    }
     if (!reverse_tail_move && currentPos[SER_TAIL] < SER_TAIL_MAX)
     {
         targetPos[SER_TAIL] = SER_TAIL_MAX;
@@ -80,6 +101,7 @@ void updateTail()
     if (!reverse_tail_move && currentPos[SER_TAIL] >= SER_TAIL_MAX)
     {
         reverse_tail_move = true;
+        tailMovesCount++;
     }
     if (reverse_tail_move && currentPos[SER_TAIL] > SER_TALI_MIN)
     {
@@ -88,6 +110,7 @@ void updateTail()
     if (reverse_tail_move && currentPos[SER_TAIL] <= SER_TALI_MIN)
     {
         reverse_tail_move = false;
+        tailMovesCount++;
     }
 }
 

@@ -4,3 +4,6 @@ void applyServoPos(int servo_ind, int pos);
 void setTailSpeed(int _speed);                  
 void core1_update_servos();
 int getCurrentServoPos(int servo_ind);
+void tailDetach();
+void tailAttach();
+void setTailMaxCount(int count);

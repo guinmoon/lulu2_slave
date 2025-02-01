@@ -13,67 +13,110 @@ void receiveEvent(int howMany)
     Serial.println("recived");
     while (Wire.available() >= 1)
     {
-        // int servoID = Wire.read();
-        // int pos = Wire.read();
-        // int spd = Wire.read();
         if (doingAction)
             return;
         int commandID = Wire.read();
+        int commandArg = Wire.read();
+        sprintf(buf, "Recived: %i %i", commandID, commandArg);
+        Serial.println(buf);
+        if (commandArg < 0)
+        {
+            Serial.println("WRONG COMMAND");
+            return;
+        }
         if (commandID == COMMAND_STAND)
         {
-            int commandArg = Wire.read();
             stand(commandArg);
-            sprintf(buf, "Recived: %i %i", commandID, commandArg);
         }
         if (commandID == COMMAND_SIT)
         {
-            int commandArg = Wire.read();
-            sprintf(buf, "Recived: %i %i", commandID, commandArg);
             sitDown(commandArg);
         }
         if (commandID == COMMAND_LAYDOWN)
         {
-            int commandArg = Wire.read();
-            sprintf(buf, "Recived: %i %i", commandID, commandArg);
             layDown(commandArg);
         }
         if (commandID == COMMAND_SET_TAIL_SPEED)
         {
-            int commandArg = Wire.read();
-            setTailSpeed(commandArg);
-            sprintf(buf, "Recived: %i %i", commandID, commandArg);
+            setTailSpeedAndCount(commandArg);
         }
         if (commandID == COMMAND_LEFTHAND)
         {
-            int commandArg = Wire.read();
-            leftHand(commandArg);
-            sprintf(buf, "Recived: %i %i", commandID, commandArg);
+            leftHand(commandArg, true);
+        }
+        if (commandID == COMMAND_RIGHTHAND)
+        {
+            leftHand(commandArg, false);
         }
         if (commandID == COMMAND_HAPPY)
         {
-            int commandArg = Wire.read();
             happy(commandArg);
-            sprintf(buf, "Recived: %i %i", commandID, commandArg);
         }
         if (commandID == COMMAND_HALFLAYDOWN)
         {
-            int commandArg = Wire.read();
             halfLayDown(commandArg);
-            sprintf(buf, "Recived: %i %i", commandID, commandArg);
+        }
+        if (commandID == COMMAND_HALFLAYDOWNTAIL)
+        {
+            halfLayDownTail(commandArg);
+        }
+        if (commandID == COMMAND_FULLLAYDOWN)
+        {
+            fullLayDown(commandArg);
+        }
+        if (commandID == COMMAND_TAILLEGSSTAND)
+        {
+            tailLegsStand(commandArg);
         }
         if (commandID == COMMAND_DANCE1)
         {
-            int commandArg = Wire.read();
             dance1(commandArg);
-            sprintf(buf, "Recived: %i %i", commandID, commandArg);
         }
-        Serial.println(buf);
-        // if (servoID >= 0 && servoID < 4)
-        // {
-        //     targetPos[servoID] = constrain(pos, 0, SERVO_180);
-        //     speed[servoID] = constrain(spd, 1, 10);
-        // }
     }
+}
+
+void setTailSpeedAndCount(int speed)
+{
+    if (speed == 0)
+    {
+        tailDetach();
+    }
+    else
+    {
+        tailAttach();
+    }
+    switch (speed)
+    {
+    case 2:
+        setTailMaxCount(3);
+        break;
+    case 3:
+        setTailMaxCount(4);
+        break;
+    case 4:
+        setTailMaxCount(5);
+        break;
+    case 5:
+        setTailMaxCount(5);
+        break;
+    case 6:
+        setTailMaxCount(7);
+        break;
+    case 7:
+        setTailMaxCount(8);
+        break;
+    case 8:
+        setTailMaxCount(8);
+        break;
+    case 9:
+        setTailMaxCount(8);
+        break;
+
+    default:
+        setTailMaxCount(3);
+        break;
+    }
+    setTailSpeed(speed);
 }
 
 void sitDown(int _speed = 10)
@@ -90,6 +133,30 @@ void halfLayDown(int _speed = 10)
     setTargetPosAndSpeed(SER_RIGHT_BACK, SERVO_90, _speed);
     setTargetPosAndSpeed(SER_LEFT_FRONT, 170, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, 170, _speed);
+}
+
+void tailLegsStand(int _speed = 10)
+{
+    setTargetPosAndSpeed(SER_LEFT_BACK, 30, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_BACK, 30, _speed);
+    setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
+}
+
+void halfLayDownTail(int _speed = 10)
+{
+    setTargetPosAndSpeed(SER_LEFT_BACK, 0, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_BACK, 0, _speed);
+    setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
+}
+
+void fullLayDown(int _speed = 10)
+{
+    setTargetPosAndSpeed(SER_LEFT_BACK, 0, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_BACK, 0, _speed);
+    setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_180, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_180, _speed);
 }
 
 void layDown(int _speed = 10)
@@ -204,40 +271,81 @@ void dance1(int _speed)
     waitForServoPos(SER_LEFT_FRONT, 90, delay_d);
 }
 
-void leftHand(int _speed = 10)
+void leftHand(int _speed = 10, bool leftHand = true)
 {
     int p1 = 80;
     int p2 = 180;
 
+    int hand1 = SER_LEFT_FRONT;
+    int hand2 = SER_RIGHT_FRONT;
+    if (!leftHand)
+    {
+        hand1 = SER_RIGHT_FRONT;
+        hand2 = SER_LEFT_FRONT;
+    }
+
     int delay_d = 800 - _speed * 50;
-    sitDown(_speed);
-    waitForServoPos(SER_LEFT_FRONT, SERVO_90, delay_d);
+    setTargetPosAndSpeed(SER_LEFT_BACK, 145, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_BACK, 145, _speed);
+    setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
+    waitForServoPos(SER_LEFT_BACK, 145, delay_d);
 
-    setTargetPosAndSpeed(SER_LEFT_FRONT, 80, _speed);
-    setTargetPosAndSpeed(SER_RIGHT_FRONT, 100, _speed);
-    setTargetPosAndSpeed(SER_LEFT_BACK, 120, _speed);
-    setTargetPosAndSpeed(SER_RIGHT_FRONT, 100, _speed);
-    waitForServoPos(SER_RIGHT_FRONT, 100, delay_d);
+    setTargetPosAndSpeed(hand1, 80, _speed);
+    setTargetPosAndSpeed(hand2, 100, _speed);
+    // setTargetPosAndSpeed(hand1, 120, _speed);
+    setTargetPosAndSpeed(hand2, 100, _speed);
+    waitForServoPos(hand2, 100, delay_d);
     delay(_speed * 5);
 
-    setTargetPosAndSpeed(SER_LEFT_FRONT, p1, _speed);
-    waitForServoPos(SER_LEFT_FRONT, p1, delay_d);
+    setTargetPosAndSpeed(hand1, p1, _speed);
+    waitForServoPos(hand1, p1, delay_d);
     delay(_speed * 5);
-    setTargetPosAndSpeed(SER_LEFT_FRONT, p2, _speed);
-    waitForServoPos(SER_LEFT_FRONT, p2, delay_d);
+    setTargetPosAndSpeed(hand1, p2, _speed);
+    waitForServoPos(hand1, p2, delay_d);
     delay(_speed * 5);
-    setTargetPosAndSpeed(SER_LEFT_FRONT, p1, _speed);
-    waitForServoPos(SER_LEFT_FRONT, p1, delay_d);
+    setTargetPosAndSpeed(hand1, p1, _speed);
+    waitForServoPos(hand1, p1, delay_d);
     delay(_speed * 5);
-    setTargetPosAndSpeed(SER_LEFT_FRONT, p2, _speed);
-    waitForServoPos(SER_LEFT_FRONT, p2, delay_d);
+    setTargetPosAndSpeed(hand1, p2, _speed);
+    waitForServoPos(hand1, p2, delay_d);
     delay(_speed * 5);
-    setTargetPosAndSpeed(SER_LEFT_FRONT, p1, _speed);
-    waitForServoPos(SER_LEFT_FRONT, p1, delay_d);
+    setTargetPosAndSpeed(hand1, p1, _speed);
+    waitForServoPos(hand1, p1, delay_d);
     delay(_speed * 5);
-    setTargetPosAndSpeed(SER_LEFT_FRONT, p2, _speed);
+    setTargetPosAndSpeed(hand1, p2, _speed);
     sitDown(_speed);
-    waitForServoPos(SER_LEFT_FRONT, SERVO_90, delay_d);
+    waitForServoPos(hand1, SERVO_90, delay_d);
+}
+
+void stepForward(int _speed = 10, int count = 1)
+{
+    int delay_d = 800 - _speed * 50;
+    for (int i = 0; i < count; i++)
+    {
+        layDown(_speed);
+        waitForServoPos(SER_RIGHT_FRONT, SERVO_180, delay_d);
+        waitForServoPos(SER_RIGHT_BACK, SERVO_180, delay_d);
+        halfLayDown(_speed);
+        // setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
+        // setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
+        waitForServoPos(SER_LEFT_BACK, SERVO_90, delay_d);
+    }
+}
+
+void stepBack(int _speed = 10, int count = 1)
+{
+    int delay_d = 800 - _speed * 50;
+    for (int i = 0; i < count; i++)
+    {
+        layDown(_speed);
+        waitForServoPos(SER_RIGHT_FRONT, SERVO_180, delay_d);
+        waitForServoPos(SER_RIGHT_BACK, SERVO_180, delay_d);
+        halfLayDown(_speed);
+        // setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
+        // setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
+        waitForServoPos(SER_LEFT_BACK, SERVO_90, delay_d);
+    }
 }
 
 void angry()
