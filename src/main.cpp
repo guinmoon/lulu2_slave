@@ -27,7 +27,7 @@ void dogInit()
     // dance1(5);
     // halfLayDown(4);    
     // leftHand(4,false);
-    delay(2000);
+    // delay(2000);
     // setTailSpeed(0);
     // delay(1000);
     // happy(4);
@@ -41,6 +41,10 @@ void setup()
     multicore_launch_core1(core1_update_servos);
 
     dogInit();
+    // leftHand(5,false);
+    // stepBack(4,2);
+    // joke1(7);
+   
     // stepForward(4,3);
     // tailLegsStand(4);
     // fullLayDown(4);
