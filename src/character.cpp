@@ -355,6 +355,8 @@ void leftHand(int _speed = 10, bool leftHand = true)
     doingAction = true;
     int p1 = 80;
     int p2 = 180;
+    int p3 = 145;
+    int p4 = 155;
 
     int hand1 = SER_LEFT_FRONT;
     int hand2 = SER_RIGHT_FRONT;
@@ -363,16 +365,20 @@ void leftHand(int _speed = 10, bool leftHand = true)
         hand1 = SER_RIGHT_FRONT;
         hand2 = SER_LEFT_FRONT;
     }
-
+    sitDown(_speed);
     int delay_d = 800 - _speed * 50;
-    setTargetPosAndSpeed(SER_LEFT_BACK, 145, _speed); 
+    setTargetPosAndSpeed(SER_LEFT_BACK, p3, _speed); 
     if (leftHand)   
-        setTargetPosAndSpeed(SER_RIGHT_BACK, 150, _speed);
+        setTargetPosAndSpeed(SER_RIGHT_BACK, p4, _speed);
     else
-        setTargetPosAndSpeed(SER_LEFT_BACK, 150, _speed);
+        setTargetPosAndSpeed(SER_LEFT_BACK, p4, _speed);
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
-    waitForServoPos(SER_LEFT_BACK, 145, delay_d);
+    waitForServoPos(SER_LEFT_BACK, p3, delay_d);
+    if (leftHand)   
+        waitForServoPos(SER_RIGHT_BACK, p4, delay_d);
+    else
+        waitForServoPos(SER_LEFT_BACK, p4, delay_d);
 
     setTargetPosAndSpeed(hand1, 80, _speed);
     setTargetPosAndSpeed(hand2, 100, _speed);
