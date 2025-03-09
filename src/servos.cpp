@@ -105,11 +105,11 @@ void updateTail()
         reverse_tail_move = true;
         tailMovesCount++;
     }
-    if (reverse_tail_move && currentPos[SER_TAIL] > SER_TALI_MIN)
+    if (reverse_tail_move && currentPos[SER_TAIL] > SER_TAIL_MIN)
     {
-        targetPos[SER_TAIL] = SER_TALI_MIN;
+        targetPos[SER_TAIL] = SER_TAIL_MIN;
     }
-    if (reverse_tail_move && currentPos[SER_TAIL] <= SER_TALI_MIN)
+    if (reverse_tail_move && currentPos[SER_TAIL] <= SER_TAIL_MIN)
     {
         reverse_tail_move = false;
         tailMovesCount++;

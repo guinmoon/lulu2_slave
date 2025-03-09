@@ -18,8 +18,11 @@ void receiveEvent(int howMany)
     // return;
     while (Wire.available() >= 1)
     {
-        if (doingAction)
+        if (doingAction){
+            Serial.println("Doing action break");
+            delay(200);
             return;
+        }
         int commandID = Wire.read();
         int commandArg = Wire.read();
         sprintf(buf, "Recived: %i %i", commandID, commandArg);
@@ -47,11 +50,11 @@ void receiveEvent(int howMany)
         }
         if (commandID == COMMAND_LEFTHAND)
         {
-            leftHand(commandArg, true);
+            giveHand(commandArg, true);
         }
         if (commandID == COMMAND_RIGHTHAND)
         {
-            leftHand(commandArg, false);
+            giveHand(commandArg, false);
         }
         if (commandID == COMMAND_HAPPY)
         {
@@ -167,7 +170,7 @@ void endCommand(int _speed, int ser, int angle)
     doingAction = false;
 }
 
-void sitDown(int _speed = 10)
+void sitDown(int _speed = 5)
 {
     int delay_d = 800 - _speed * 50;
     beginCommand();
@@ -179,7 +182,7 @@ void sitDown(int _speed = 10)
     endCommand(_speed, SER_RIGHT_BACK, 155);
 }
 
-void halfLayDown(int _speed = 10)
+void halfLayDown(int _speed = 5)
 {
     int delay_d = 800 - _speed * 50;
     beginCommand();
@@ -191,7 +194,7 @@ void halfLayDown(int _speed = 10)
     endCommand(_speed, SER_RIGHT_BACK, SERVO_90);
 }
 
-void tailLegsStand(int _speed = 10)
+void tailLegsStand(int _speed = 5)
 {
     beginCommand();
     int delay_d = 800 - _speed * 50;
@@ -205,7 +208,7 @@ void tailLegsStand(int _speed = 10)
     // sitDown(_speed);
 }
 
-// void halfLayDownTail(int _speed = 10)
+// void halfLayDownTail(int _speed = 5)
 // {
 //     int delay_d = 800 - _speed * 50;
 //     setTargetPosAndSpeed(SER_LEFT_BACK, 0, _speed);
@@ -216,7 +219,7 @@ void tailLegsStand(int _speed = 10)
 //     sitDown(_speed);
 // }
 
-void fullLayDown(int _speed = 10)
+void fullLayDown(int _speed = 5)
 {
     int delay_d = 800 - _speed * 50;
     beginCommand();
@@ -228,7 +231,7 @@ void fullLayDown(int _speed = 10)
     endCommand(_speed, SER_RIGHT_BACK, 0);
 }
 
-void layDown(int _speed = 10)
+void layDown(int _speed = 5)
 {
     int delay_d = 800 - _speed * 50;
     beginCommand();
@@ -240,7 +243,7 @@ void layDown(int _speed = 10)
     endCommand(_speed, SER_RIGHT_BACK, SERVO_180);
 }
 
-void stand(int _speed = 10)
+void stand(int _speed = 5)
 {
     int delay_d = 800 - _speed * 50;
     beginCommand();
@@ -253,7 +256,7 @@ void stand(int _speed = 10)
     endCommand(_speed, SER_RIGHT_BACK, SERVO_90);
 }
 
-void jump(int _speed = 10)
+void jump(int _speed = 5)
 {
     applyServoPos(0, SERVO_90);
     applyServoPos(3, SERVO_90);
@@ -278,8 +281,10 @@ void waitForServoPos(int servo_ind, int wait_angle, int timeout)
     {
         delay(SER_UPDATE_INTERVAL);
         iter_num++;
-        if (iter_num * SER_UPDATE_INTERVAL > timeout)
+        if (iter_num * SER_UPDATE_INTERVAL > timeout){
+            Serial.println("Timeout");
             break;
+        }
     }
 }
 
@@ -350,13 +355,12 @@ void dance1(int _speed)
     doingAction = false;
 }
 
-void leftHand(int _speed = 10, bool leftHand = true)
+void giveHand(int _speed = 5, bool leftHand = true)
 {
     doingAction = true;
     int p1 = 80;
-    int p2 = 180;
-    int p3 = 145;
-    int p4 = 155;
+    int p2 = 180;    
+    int p4 = 135;
 
     int hand1 = SER_LEFT_FRONT;
     int hand2 = SER_RIGHT_FRONT;
@@ -366,19 +370,20 @@ void leftHand(int _speed = 10, bool leftHand = true)
         hand2 = SER_LEFT_FRONT;
     }
     sitDown(_speed);
-    int delay_d = 800 - _speed * 50;
-    setTargetPosAndSpeed(SER_LEFT_BACK, p3, _speed); 
+    int delay_d = 800 - _speed * 50;    
     if (leftHand)   
-        setTargetPosAndSpeed(SER_RIGHT_BACK, p4, _speed);
-    else
         setTargetPosAndSpeed(SER_LEFT_BACK, p4, _speed);
+    else
+        setTargetPosAndSpeed(SER_RIGHT_BACK, p4, _speed);
+        
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
-    waitForServoPos(SER_LEFT_BACK, p3, delay_d);
+
     if (leftHand)   
-        waitForServoPos(SER_RIGHT_BACK, p4, delay_d);
-    else
         waitForServoPos(SER_LEFT_BACK, p4, delay_d);
+    else
+        waitForServoPos(SER_RIGHT_BACK, p4, delay_d);
+        
 
     setTargetPosAndSpeed(hand1, 80, _speed);
     setTargetPosAndSpeed(hand2, 100, _speed);
@@ -408,7 +413,52 @@ void leftHand(int _speed = 10, bool leftHand = true)
     doingAction = false;
 }
 
-void stepForward(int _speed = 10, int count = 1)
+void giveHandLong(int _speed = 5, bool leftHand = true){
+    doingAction = true;
+    int p1 = 80;
+    int p2 = 180;    
+    int p4 = 135;
+
+    int hand1 = SER_LEFT_FRONT;
+    int hand2 = SER_RIGHT_FRONT;
+    if (!leftHand)
+    {
+        hand1 = SER_RIGHT_FRONT;
+        hand2 = SER_LEFT_FRONT;
+    }
+    sitDown(_speed);
+    int delay_d = 800 - _speed * 50;    
+    if (leftHand)   
+        setTargetPosAndSpeed(SER_LEFT_BACK, p4, _speed);
+    else
+        setTargetPosAndSpeed(SER_RIGHT_BACK, p4, _speed);
+        
+    setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
+    setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
+
+    if (leftHand)   
+        waitForServoPos(SER_LEFT_BACK, p4, delay_d);
+    else
+        waitForServoPos(SER_RIGHT_BACK, p4, delay_d);
+        
+
+    setTargetPosAndSpeed(hand1, 80, _speed);
+    setTargetPosAndSpeed(hand2, 100, _speed);
+    // setTargetPosAndSpeed(hand1, 120, _speed);
+    setTargetPosAndSpeed(hand2, 100, _speed);
+    waitForServoPos(hand2, 100, delay_d);
+    delay(_speed * 5);
+
+    setTargetPosAndSpeed(hand1, p1, _speed);
+    waitForServoPos(hand1, p1, delay_d);
+    delay(_speed * 5);
+    setTargetPosAndSpeed(hand1, p2, _speed);
+    waitForServoPos(hand1, p2, delay_d);
+    delay(_speed * 5);
+    doingAction = false;
+}
+
+void stepForward(int _speed = 5, int count = 1)
 {
     doingAction = true;
     int delay_d = 800 - _speed * 50;
@@ -425,7 +475,7 @@ void stepForward(int _speed = 10, int count = 1)
     doingAction = false;
 }
 
-// void stepBack(int _speed = 10, int count = 1)
+// void stepBack(int _speed = 5, int count = 1)
 // {
 //     doingAction = true;
 //     int delay_d = 800 - _speed * 50;
@@ -449,7 +499,7 @@ void stepForward(int _speed = 10, int count = 1)
 //     doingAction = false;
 // }
 
-void joke1(int _speed = 10)
+void joke1(int _speed = 5)
 {
     doingAction = true;
     int delay_d = 800 - _speed * 50;

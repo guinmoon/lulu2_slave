@@ -14,11 +14,11 @@
 void dogInit()
 {
     // setTailSpeed(4);
-    layDown(3);
-    waitForServoPos(SER_LEFT_FRONT, SERVO_180, 1000);
-    delay(1000);
-    stand(4);
-    waitForServoPos(SER_LEFT_FRONT, SERVO_90, 1000);
+    // layDown(4);    
+    
+    // sitDown(5);
+    giveHandLong(5,false);
+    // stand(4);    
     // leftHand(4);
     // sitDown(5);
     // delay(1000);
@@ -41,7 +41,8 @@ void setup()
     multicore_launch_core1(core1_update_servos);
 
     dogInit();
-    // leftHand(5,true);
+    
+    // leftHand(5,false);
     // stepBack(4,2);
     // joke1(7);
    

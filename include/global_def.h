@@ -17,7 +17,7 @@
 #define SER_TAIL 4
 
 #define SER_TAIL_MAX 120
-#define SER_TALI_MIN 60
+#define SER_TAIL_MIN 60
 
 #define SER_LEFT_FRONT_PIN 6
 #define SER_RIGHT_FRONT_PIN 2
