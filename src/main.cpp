@@ -41,7 +41,7 @@ void setup()
     multicore_launch_core1(core1_update_servos);
 
     dogInit();
-    leftHand(5,true);
+    // leftHand(5,true);
     // stepBack(4,2);
     // joke1(7);
    
