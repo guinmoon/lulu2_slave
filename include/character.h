@@ -19,3 +19,5 @@ void setTailSpeedAndCount(int speed);
 long getLastPingTime();
 void setLastPingTime(long t);
 void joke1(int _speed );
+void giveHandLong(int _speed, bool leftHand );
+void requestHandler();

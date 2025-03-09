@@ -101,7 +101,21 @@ void receiveEvent(int howMany)
             setLastPingTime(millis());
             pico_sleep(RP_SLEEP_DURATION_SEC);
         }
+        
     }
+}
+
+void requestHandler(){
+    Serial.printf("requestHandler\n");
+    int i = 20;
+    while (doingAction && i>0)
+    {
+        delay(100);
+        i--;
+    }    
+    uint8_t data = 4;
+    Wire.write(data);
+    Serial.printf("sended\n");
 }
 
 long getLastPingTime()
@@ -168,6 +182,15 @@ void endCommand(int _speed, int ser, int angle)
     // int delay_d = 800 - _speed * 50;
     // waitForServoPos(ser, angle, delay_d);
     doingAction = false;
+
+}
+
+void endCommand()
+{
+    // int delay_d = 800 - _speed * 50;
+    // waitForServoPos(ser, angle, delay_d);
+    doingAction = false;
+    
 }
 
 void sitDown(int _speed = 5)
@@ -179,7 +202,7 @@ void sitDown(int _speed = 5)
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
     waitForServoPos(SER_LEFT_BACK, 155, delay_d);
-    endCommand(_speed, SER_RIGHT_BACK, 155);
+    endCommand();
 }
 
 void halfLayDown(int _speed = 5)
@@ -191,7 +214,7 @@ void halfLayDown(int _speed = 5)
     setTargetPosAndSpeed(SER_LEFT_FRONT, 170, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, 170, _speed);
     waitForServoPos(SER_LEFT_FRONT, 170, delay_d);
-    endCommand(_speed, SER_RIGHT_BACK, SERVO_90);
+    endCommand();
 }
 
 void tailLegsStand(int _speed = 5)
@@ -203,7 +226,7 @@ void tailLegsStand(int _speed = 5)
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
     waitForServoPos(SER_LEFT_FRONT, SERVO_90, delay_d);
-    endCommand(_speed, -1, -1);
+    endCommand();
     // delay(2000);
     // sitDown(_speed);
 }
@@ -228,7 +251,7 @@ void fullLayDown(int _speed = 5)
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_180, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_180, _speed);
     waitForServoPos(SER_LEFT_FRONT, SERVO_180, delay_d);
-    endCommand(_speed, SER_RIGHT_BACK, 0);
+    endCommand();
 }
 
 void layDown(int _speed = 5)
@@ -240,7 +263,7 @@ void layDown(int _speed = 5)
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_180, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_180, _speed);
     waitForServoPos(SER_LEFT_BACK, SERVO_180, delay_d);
-    endCommand(_speed, SER_RIGHT_BACK, SERVO_180);
+    endCommand();
 }
 
 void stand(int _speed = 5)
@@ -253,7 +276,7 @@ void stand(int _speed = 5)
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
     waitForServoPos(SER_LEFT_BACK, SERVO_90, delay_d);
     waitForServoPos(SER_LEFT_FRONT, SERVO_90, delay_d);
-    endCommand(_speed, SER_RIGHT_BACK, SERVO_90);
+    endCommand();
 }
 
 void jump(int _speed = 5)
@@ -271,7 +294,7 @@ void happy(int _speed)
     stand(_speed); 
     dance_elem2(_speed);
     dance_elem2(_speed);
-    doingAction = false;
+    endCommand();
 }
 
 void waitForServoPos(int servo_ind, int wait_angle, int timeout)
@@ -352,7 +375,7 @@ void dance1(int _speed)
 
     stand(_speed);
 
-    doingAction = false;
+    endCommand();
 }
 
 void giveHand(int _speed = 5, bool leftHand = true)
@@ -410,7 +433,7 @@ void giveHand(int _speed = 5, bool leftHand = true)
     setTargetPosAndSpeed(hand1, p2, _speed);
     sitDown(_speed);
     waitForServoPos(hand1, SERVO_90, delay_d);
-    doingAction = false;
+    endCommand();
 }
 
 void giveHandLong(int _speed = 5, bool leftHand = true){
@@ -455,7 +478,7 @@ void giveHandLong(int _speed = 5, bool leftHand = true){
     setTargetPosAndSpeed(hand1, p2, _speed);
     waitForServoPos(hand1, p2, delay_d);
     delay(_speed * 5);
-    doingAction = false;
+    endCommand();
 }
 
 void stepForward(int _speed = 5, int count = 1)
@@ -472,7 +495,7 @@ void stepForward(int _speed = 5, int count = 1)
         // setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
         waitForServoPos(SER_LEFT_BACK, SERVO_90, delay_d);
     }
-    doingAction = false;
+    endCommand();
 }
 
 // void stepBack(int _speed = 5, int count = 1)
@@ -496,7 +519,7 @@ void stepForward(int _speed = 5, int count = 1)
         
 //         delay(500);
 //     }
-//     doingAction = false;
+//     endCommand();
 // }
 
 void joke1(int _speed = 5)
@@ -504,11 +527,14 @@ void joke1(int _speed = 5)
     doingAction = true;
     int delay_d = 800 - _speed * 50;
     stand(_speed);    
-    setTargetPosAndSpeed(SER_LEFT_FRONT, 180, _speed);
-    setTargetPosAndSpeed(SER_LEFT_BACK, 0, _speed);
-    doingAction = false;
+    delay(1000);
+    setTargetPosAndSpeed(SER_LEFT_FRONT, 180, 10);
+    setTargetPosAndSpeed(SER_LEFT_BACK, 180, 10);
+    endCommand();
 }
 
 void angry()
 {
 }
+
+

@@ -17,7 +17,8 @@ void dogInit()
     // layDown(4);    
     
     // sitDown(5);
-    giveHandLong(5,false);
+    // joke1(4);
+    giveHand(5,true);
     // stand(4);    
     // leftHand(4);
     // sitDown(5);
@@ -60,6 +61,7 @@ void setup()
     // prepareSleep();
     Wire.begin(8);
     Wire.onReceive(receiveEvent);
+    Wire.onRequest(requestHandler);
 }
 
 void loop()
