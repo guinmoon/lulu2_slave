@@ -56,6 +56,14 @@ void receiveEvent(int howMany)
         {
             giveHand(commandArg, false);
         }
+        if (commandID == COMMAND_LEFTHAND_LONG)
+        {
+            giveHandLong(commandArg, true);
+        }
+        if (commandID == COMMAND_RIGHTHAND_LONG)
+        {
+            giveHandLong(commandArg, false);
+        }
         if (commandID == COMMAND_HAPPY)
         {
             happy(commandArg);
