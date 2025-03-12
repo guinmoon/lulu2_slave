@@ -15,8 +15,8 @@ Servo servo_tail;
 int tailMovesCount = 0;
 int tailMaxMovesCount = 6;
 
-int currentPos[5] = {SERVO_90, SERVO_90, SERVO_90, SERVO_90, 0};
-int targetPos[5] = {SERVO_90, SERVO_90, SERVO_90, SERVO_90, SERVO_90};
+int currentPos[5] = {SERVO_90, 155, 155, SERVO_90, 0}; //sit position
+int targetPos[5] = {SERVO_90, 155, 155, SERVO_90, SERVO_90}; //sit position
 int servo_speed[5] = {1, 1, 1, 1, 0};
 bool reverse_tail_move = false;
 

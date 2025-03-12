@@ -18,7 +18,7 @@ void dogInit()
     
     // sitDown(5);
     // joke1(4);
-    giveHand(5,true);
+    // giveHand(5,true);
     // stand(4);    
     // leftHand(4);
     // sitDown(5);
