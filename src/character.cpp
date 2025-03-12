@@ -115,13 +115,9 @@ void receiveEvent(int howMany)
 
 void requestHandler(){
     Serial.printf("requestHandler\n");
-    int i = 20;
-    while (doingAction && i>0)
-    {
-        delay(100);
-        i--;
-    }    
     uint8_t data = 4;
+    if (doingAction)
+        data = 3;
     Wire.write(data);
     Serial.printf("sended\n");
 }
