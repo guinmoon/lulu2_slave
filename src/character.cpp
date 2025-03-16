@@ -9,8 +9,10 @@ bool doingAction = false;
 
 long lastPingTime = 0;
 
+extern bool touched;
+
 // Функция обработки полученных данных
-void receiveEvent(int howMany)
+void onReceive(int howMany)
 {
     char buf[200];
     Serial.println("recived");
@@ -113,13 +115,15 @@ void receiveEvent(int howMany)
     }
 }
 
-void requestHandler(){
-    Serial.printf("requestHandler\n");
+void onRequest(){
+    // Serial.printf("requestHandler\n");
     uint8_t data = 4;
     if (doingAction)
         data = 3;
+    if (touched)
+        data = 5;
     Wire.write(data);
-    Serial.printf("sended\n");
+    // Serial.printf("requestHandler sended\n");
 }
 
 long getLastPingTime()
@@ -386,7 +390,7 @@ void giveHand(int _speed = 5, bool leftHand = true)
 {
     doingAction = true;
     int p1 = 80;
-    int p2 = 180;    
+    int p2 = SERVO_180;    
     int p4 = 135;
 
     int hand1 = SER_LEFT_FRONT;
@@ -443,7 +447,7 @@ void giveHand(int _speed = 5, bool leftHand = true)
 void giveHandLong(int _speed = 5, bool leftHand = true){
     doingAction = true;
     int p1 = 80;
-    int p2 = 180;    
+    int p2 = SERVO_180;    
     int p4 = 135;
 
     int hand1 = SER_LEFT_FRONT;

@@ -11,6 +11,7 @@ Servo servo_right_front;
 Servo servo_right_back;
 Servo servo_tail;
 
+// bool touched = false;
 
 int tailMovesCount = 0;
 int tailMaxMovesCount = 6;
@@ -120,6 +121,15 @@ void updateTail()
 void updateServos()
 {
     unsigned long currentTime = millis(); 
+        
+    // if (currentTime - lastUpdateTime >= SER_UPDATE_INTERVAL)
+    // {
+    //     touched = digitalRead(TOUCH_PIN);
+    //     if (touched != 0)
+    //     {
+    //         Serial.println("Touch ");            
+    //     }
+    // }
     if (currentTime - lastUpdateTime >= SER_UPDATE_INTERVAL)
     {
         if (currentTime-getLastPingTime()>=MSEC_UNTIL_SLEEP){
@@ -162,6 +172,8 @@ void updateServos()
                 break;
             }
         }
+    }else{
+        // delay(1);
     }
 }
 

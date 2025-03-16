@@ -5,28 +5,35 @@
 #include "global_def.h"
 #include "servos.h"
 #include "character.h"
+#include "touch_helper.h"
 #include "pico/stdlib.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <TaskScheduler.h>
+
+Scheduler runner;
+bool touched = false;
+
+
 
 
 void dogInit()
 {
     // setTailSpeed(4);
-    // layDown(4);    
-    
+    // layDown(4);
+
     // sitDown(5);
     // joke1(4);
     // giveHand(5,true);
-    // stand(4);    
+    // stand(4);
     // leftHand(4);
     // sitDown(5);
     // delay(1000);
     // stand(2);
     // delay(1000);
     // dance1(5);
-    // halfLayDown(4);    
+    // halfLayDown(4);
     // leftHand(4,false);
     // delay(2000);
     // setTailSpeed(0);
@@ -34,24 +41,37 @@ void dogInit()
     // happy(4);
 }
 
+
+void TouchCallback()
+{
+    touched = digitalRead(TOUCH_PIN);
+    if (touched != 0)
+    {
+        Serial.println("Touch ");
+    }
+}
+
+Task touchTask(80, TASK_FOREVER, &TouchCallback);
+
+
 void setup()
 {
-
+    pinMode(TOUCH_PIN, INPUT);
     // Настройка сервоприводов
     initServos();
     multicore_launch_core1(core1_update_servos);
 
     dogInit();
-    
+
     // leftHand(5,false);
     // stepBack(4,2);
     // joke1(7);
-   
+
     // stepForward(4,3);
     // tailLegsStand(4);
     // fullLayDown(4);
     // delay(2000);
-    
+
     // layDown(4);
     // leftHand(5,false);
     // Настройка I2C
@@ -60,8 +80,12 @@ void setup()
     setLastPingTime(millis());
     // prepareSleep();
     Wire.begin(8);
-    Wire.onReceive(receiveEvent);
-    Wire.onRequest(requestHandler);
+    Wire.onReceive(onReceive);
+    Wire.onRequest(onRequest);
+
+    runner.init();
+    runner.addTask(touchTask);
+    touchTask.enable();
 }
 
 void loop()
@@ -77,6 +101,7 @@ void loop()
 
     // setTargetPosAndSpeed(SER_TAIL,90,5);
     // setTailSpeed(4);
-    Serial.println("loop");
-    delay(1000);
+    runner.execute();
+    // Serial.println("loop");
+    // delay(1000);
 }

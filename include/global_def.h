@@ -3,7 +3,7 @@
 #define USMIN 600    // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
 #define USMAX 2300   // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50
-#define SERVO_180 165
+#define SERVO_180 170
 #define SERVO_90 90
 #define SERVO_0 25
 
@@ -27,5 +27,10 @@
 
 #define SER_UPDATE_INTERVAL 15
 
+#define TOUCH_UPDATE_INTERVAL 80
+
+
 #define MSEC_UNTIL_SLEEP 10000
 #define RP_SLEEP_DURATION_SEC 5
+
+#define TOUCH_PIN 27

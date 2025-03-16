@@ -1,4 +1,4 @@
-void receiveEvent(int howMany);
+void onReceive(int howMany);
 void sitDown(int _speed);
 void halfLayDown(int _speed );
 void tailLegsStand(int _speed );
@@ -20,4 +20,4 @@ long getLastPingTime();
 void setLastPingTime(long t);
 void joke1(int _speed );
 void giveHandLong(int _speed, bool leftHand );
-void requestHandler();
+void onRequest();
