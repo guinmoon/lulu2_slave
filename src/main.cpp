@@ -58,7 +58,7 @@ void setup()
 {
     pinMode(TOUCH_PIN, INPUT);
     // Настройка сервоприводов
-    initServos();
+    attachServos();
     multicore_launch_core1(core1_update_servos);
 
     dogInit();

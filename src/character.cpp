@@ -34,6 +34,9 @@ void onReceive(int howMany)
             Serial.println("WRONG COMMAND");
             return;
         }
+        if (commandID<100){
+            attachServos();
+        }
         if (commandID == COMMAND_STAND)
         {
             stand(commandArg);
@@ -190,7 +193,7 @@ void endCommand(int _speed, int ser, int angle)
     // int delay_d = 800 - _speed * 50;
     // waitForServoPos(ser, angle, delay_d);
     doingAction = false;
-
+    detachServos();
 }
 
 void endCommand()

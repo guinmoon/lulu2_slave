@@ -1,4 +1,5 @@
-void initServos();
+void attachServos();
+void detachServos();
 void setTargetPosAndSpeed(int servo_ind, int pos, int _speed);
 void applyServoPos(int servo_ind, int pos);
 void setTailSpeed(int _speed);                  
