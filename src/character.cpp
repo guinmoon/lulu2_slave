@@ -43,7 +43,7 @@ void onReceive(int howMany)
         }
         if (commandID == COMMAND_SIT)
         {
-            sitDown(commandArg);
+            sitDown(commandArg,true);
         }
         if (commandID == COMMAND_LAYDOWN)
         {
@@ -201,10 +201,10 @@ void endCommand()
     // int delay_d = 800 - _speed * 50;
     // waitForServoPos(ser, angle, delay_d);
     doingAction = false;
-    
+    detachServos();
 }
 
-void sitDown(int _speed = 5)
+void sitDown(int _speed, bool detachOnFinish)
 {
     int delay_d = 800 - _speed * 50;
     beginCommand();
@@ -213,7 +213,8 @@ void sitDown(int _speed = 5)
     setTargetPosAndSpeed(SER_LEFT_FRONT, SERVO_90, _speed);
     setTargetPosAndSpeed(SER_RIGHT_FRONT, SERVO_90, _speed);
     waitForServoPos(SER_LEFT_BACK, 155, delay_d);
-    endCommand();
+    if (detachOnFinish)
+        endCommand();
 }
 
 void halfLayDown(int _speed = 5)
@@ -320,6 +321,7 @@ void waitForServoPos(int servo_ind, int wait_angle, int timeout)
             break;
         }
     }
+    delay(SER_UPDATE_INTERVAL);
 }
 
 void dance_elem1(int _speed)
@@ -403,7 +405,7 @@ void giveHand(int _speed = 5, bool leftHand = true)
         hand1 = SER_RIGHT_FRONT;
         hand2 = SER_LEFT_FRONT;
     }
-    sitDown(_speed);
+    sitDown(_speed,false);
     int delay_d = 800 - _speed * 50;    
     if (leftHand)   
         setTargetPosAndSpeed(SER_LEFT_BACK, p4, _speed);
@@ -442,7 +444,7 @@ void giveHand(int _speed = 5, bool leftHand = true)
     waitForServoPos(hand1, p1, delay_d);
     delay(_speed * 5);
     setTargetPosAndSpeed(hand1, p2, _speed);
-    sitDown(_speed);
+    sitDown(_speed,false);
     waitForServoPos(hand1, SERVO_90, delay_d);
     endCommand();
 }
@@ -460,7 +462,7 @@ void giveHandLong(int _speed = 5, bool leftHand = true){
         hand1 = SER_RIGHT_FRONT;
         hand2 = SER_LEFT_FRONT;
     }
-    sitDown(_speed);
+    sitDown(_speed,false);
     int delay_d = 800 - _speed * 50;    
     if (leftHand)   
         setTargetPosAndSpeed(SER_LEFT_BACK, p4, _speed);

@@ -1,5 +1,5 @@
 void onReceive(int howMany);
-void sitDown(int _speed);
+void sitDown(int _speed, bool detachOnFinish);
 void halfLayDown(int _speed );
 void tailLegsStand(int _speed );
 // void halfLayDownTail(int _speed );

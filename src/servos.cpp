@@ -35,7 +35,7 @@ void attachServos()
     servo_left_back.attach(SER_LEFT_BACK_PIN, USMIN, USMAX);
     servo_right_back.attach(SER_RIGHT_BACK_PIN, USMIN, USMAX);
     servo_right_front.attach(SER_RIGHT_FRONT_PIN, USMIN, USMAX);    
-    servo_tail.attach(SER_TAIL_PIN, USMIN, USMAX);
+    // servo_tail.attach(SER_TAIL_PIN, USMIN, USMAX);
 }
 
 void detachServos()
@@ -44,7 +44,7 @@ void detachServos()
     servo_left_back.detach();
     servo_right_back.detach();
     servo_right_front.detach();    
-    servo_tail.detach();
+    // servo_tail.detach();
 }
 
 
